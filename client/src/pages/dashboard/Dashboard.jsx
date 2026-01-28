@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import {
     TrendingUp,
     TrendingDown,
@@ -20,16 +21,54 @@ import {
     Tooltip,
     ResponsiveContainer
 } from 'recharts'
-import { mockPortfolio, mockWallet, mockInvestments, mockTransactions, mockChartData } from '../../data/mockData'
+import { useAuth } from '../../context/AuthContext'
+import axios from 'axios'
 import './Dashboard.css'
 
+const API_URL = import.meta.env.VITE_API_URL || '/api'
+
 function Dashboard() {
+    const { user } = useAuth()
+    const [wallet, setWallet] = useState(null)
+    const [investments, setInvestments] = useState([])
+    const [transactions, setTransactions] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchDashboardData()
+    }, [])
+
+    const fetchDashboardData = async () => {
+        try {
+            const token = localStorage.getItem('token')
+            const config = { headers: { Authorization: `Bearer ${token}` } }
+
+            const [walletRes, investmentsRes, transactionsRes] = await Promise.all([
+                axios.get(`${API_URL}/wallet`, config),
+                axios.get(`${API_URL}/investments`, config),
+                axios.get(`${API_URL}/wallet/transactions`, config)
+            ])
+
+            setWallet(walletRes.data.wallet || { balance: 0, totalDeposited: 0, totalWithdrawn: 0 })
+            setInvestments(investmentsRes.data.investments || [])
+            setTransactions(transactionsRes.data.transactions || [])
+        } catch (error) {
+            console.error('Error fetching dashboard data:', error)
+            // Set default empty values on error
+            setWallet({ balance: 0, totalDeposited: 0, totalWithdrawn: 0 })
+            setInvestments([])
+            setTransactions([])
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',
             minimumFractionDigits: 2
-        }).format(amount)
+        }).format(amount || 0)
     }
 
     const formatDate = (dateString) => {
@@ -40,21 +79,44 @@ function Dashboard() {
         })
     }
 
-    const activeInvestments = mockInvestments.filter(inv => inv.status === 'active')
-    const recentTransactions = mockTransactions.slice(0, 5)
+    // Calculate portfolio stats from real data
+    const activeInvestments = investments.filter(inv => inv.status === 'active')
+    const totalInvested = activeInvestments.reduce((sum, inv) => sum + (inv.amount || 0), 0)
+    const totalProfit = activeInvestments.reduce((sum, inv) => sum + (inv.profit || 0), 0)
+    const totalValue = totalInvested + totalProfit
+    const profitPercentage = totalInvested > 0 ? ((totalProfit / totalInvested) * 100).toFixed(2) : 0
+
+    const recentTransactions = transactions.slice(0, 5)
+
+    if (loading) {
+        return (
+            <div className="dashboard-page fade-in">
+                <div style={{ textAlign: 'center', padding: '4rem' }}>
+                    <div className="loader" style={{ margin: '0 auto' }} />
+                    <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Loading dashboard...</p>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="dashboard-page fade-in">
             {/* Welcome Section */}
             <div className="welcome-section">
                 <div>
-                    <h1 className="welcome-title">Welcome back, John! 👋</h1>
+                    <h1 className="welcome-title">Welcome back, {user?.firstName || 'User'}! 👋</h1>
                     <p className="welcome-subtitle">Here's what's happening with your investments today.</p>
                 </div>
-                <Link to="/investments/plans" className="btn btn-primary">
-                    <TrendingUp size={18} />
-                    New Investment
-                </Link>
+                <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+                    <Link to="/wallet/withdraw" className="btn btn-secondary">
+                        <ArrowUpRight size={18} />
+                        Withdraw
+                    </Link>
+                    <Link to="/investments/plans" className="btn btn-primary">
+                        <TrendingUp size={18} />
+                        New Investment
+                    </Link>
+                </div>
             </div>
 
             {/* Stats Grid */}
@@ -64,12 +126,14 @@ function Dashboard() {
                         <div className="stat-card-icon" style={{ background: 'var(--primary-glow)' }}>
                             <Wallet size={24} style={{ color: 'var(--primary)' }} />
                         </div>
-                        <span className="stat-card-change positive">
-                            <ArrowUpRight size={16} />
-                            +12.5%
-                        </span>
+                        {profitPercentage > 0 && (
+                            <span className="stat-card-change positive">
+                                <ArrowUpRight size={16} />
+                                +{profitPercentage}%
+                            </span>
+                        )}
                     </div>
-                    <span className="stat-card-value">{formatCurrency(mockPortfolio.totalValue)}</span>
+                    <span className="stat-card-value">{formatCurrency(totalValue)}</span>
                     <span className="stat-card-label">Total Portfolio Value</span>
                 </div>
 
@@ -78,12 +142,14 @@ function Dashboard() {
                         <div className="stat-card-icon" style={{ background: 'var(--success-bg)' }}>
                             <TrendingUp size={24} style={{ color: 'var(--success)' }} />
                         </div>
-                        <span className="stat-card-change positive">
-                            <ArrowUpRight size={16} />
-                            +{mockPortfolio.profitPercentage}%
-                        </span>
+                        {profitPercentage > 0 && (
+                            <span className="stat-card-change positive">
+                                <ArrowUpRight size={16} />
+                                +{profitPercentage}%
+                            </span>
+                        )}
                     </div>
-                    <span className="stat-card-value">{formatCurrency(mockPortfolio.totalProfit)}</span>
+                    <span className="stat-card-value">{formatCurrency(totalProfit)}</span>
                     <span className="stat-card-label">Total Profit</span>
                 </div>
 
@@ -93,7 +159,7 @@ function Dashboard() {
                             <PiggyBank size={24} style={{ color: 'var(--info)' }} />
                         </div>
                     </div>
-                    <span className="stat-card-value">{formatCurrency(mockWallet.balance)}</span>
+                    <span className="stat-card-value">{formatCurrency(wallet?.balance || 0)}</span>
                     <span className="stat-card-label">Wallet Balance</span>
                 </div>
 
@@ -103,7 +169,7 @@ function Dashboard() {
                             <BarChart3 size={24} style={{ color: 'var(--warning)' }} />
                         </div>
                     </div>
-                    <span className="stat-card-value">{mockPortfolio.activeInvestments}</span>
+                    <span className="stat-card-value">{activeInvestments.length}</span>
                     <span className="stat-card-label">Active Investments</span>
                 </div>
             </div>
@@ -122,44 +188,64 @@ function Dashboard() {
                         </div>
                     </div>
                     <div className="chart-container">
-                        <ResponsiveContainer width="100%" height={300}>
-                            <AreaChart data={mockChartData}>
-                                <defs>
-                                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                                <XAxis
-                                    dataKey="month"
-                                    stroke="var(--text-muted)"
-                                    tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
-                                />
-                                <YAxis
-                                    stroke="var(--text-muted)"
-                                    tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
-                                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                                />
-                                <Tooltip
-                                    contentStyle={{
-                                        background: 'var(--bg-card)',
-                                        border: '1px solid var(--border-color)',
-                                        borderRadius: 'var(--radius-md)',
-                                        color: 'var(--text-primary)'
-                                    }}
-                                    formatter={(value) => [formatCurrency(value), 'Value']}
-                                />
-                                <Area
-                                    type="monotone"
-                                    dataKey="value"
-                                    stroke="var(--primary)"
-                                    strokeWidth={2}
-                                    fillOpacity={1}
-                                    fill="url(#colorValue)"
-                                />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                        {activeInvestments.length > 0 ? (
+                            <ResponsiveContainer width="100%" height={300}>
+                                <AreaChart data={[
+                                    { month: 'Start', value: totalInvested },
+                                    { month: 'Current', value: totalValue }
+                                ]}>
+                                    <defs>
+                                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                                    <XAxis
+                                        dataKey="month"
+                                        stroke="var(--text-muted)"
+                                        tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
+                                    />
+                                    <YAxis
+                                        stroke="var(--text-muted)"
+                                        tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
+                                        tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                                    />
+                                    <Tooltip
+                                        contentStyle={{
+                                            background: 'var(--bg-card)',
+                                            border: '1px solid var(--border-color)',
+                                            borderRadius: 'var(--radius-md)',
+                                            color: 'var(--text-primary)'
+                                        }}
+                                        formatter={(value) => [formatCurrency(value), 'Value']}
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="value"
+                                        stroke="var(--primary)"
+                                        strokeWidth={2}
+                                        fillOpacity={1}
+                                        fill="url(#colorValue)"
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        ) : (
+                            <div style={{
+                                height: 300,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexDirection: 'column',
+                                gap: 'var(--space-md)'
+                            }}>
+                                <BarChart3 size={48} style={{ color: 'var(--text-muted)', opacity: 0.5 }} />
+                                <p style={{ color: 'var(--text-muted)', textAlign: 'center' }}>
+                                    No investment data yet.<br />
+                                    <Link to="/investments/plans" style={{ color: 'var(--primary)' }}>Start investing</Link> to see your portfolio grow!
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
 

@@ -153,6 +153,99 @@ function Deposit() {
                             </div>
                         )}
 
+                        {/* Crypto Wallet Details */}
+                        {method === 'crypto' && (
+                            <div className="summary-box" style={{ marginTop: 'var(--space-xl)' }}>
+                                <h4 style={{ marginBottom: 'var(--space-md)' }}>Cryptocurrency Wallets</h4>
+
+                                <div style={{ marginBottom: 'var(--space-lg)' }}>
+                                    <span style={{ color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)', display: 'block', marginBottom: 'var(--space-xs)' }}>
+                                        Bitcoin (BTC)
+                                    </span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+                                        <span style={{ fontWeight: 500, fontSize: 'var(--font-size-sm)', wordBreak: 'break-all' }}>
+                                            bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => copyToClipboard('bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh')}
+                                            style={{
+                                                background: 'none',
+                                                border: 'none',
+                                                color: 'var(--primary)',
+                                                cursor: 'pointer',
+                                                padding: 4,
+                                                flexShrink: 0
+                                            }}
+                                        >
+                                            {copied ? <Check size={14} /> : <Copy size={14} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style={{ marginBottom: 'var(--space-lg)' }}>
+                                    <span style={{ color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)', display: 'block', marginBottom: 'var(--space-xs)' }}>
+                                        Ethereum (ETH)
+                                    </span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+                                        <span style={{ fontWeight: 500, fontSize: 'var(--font-size-sm)', wordBreak: 'break-all' }}>
+                                            0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => copyToClipboard('0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb')}
+                                            style={{
+                                                background: 'none',
+                                                border: 'none',
+                                                color: 'var(--primary)',
+                                                cursor: 'pointer',
+                                                padding: 4,
+                                                flexShrink: 0
+                                            }}
+                                        >
+                                            {copied ? <Check size={14} /> : <Copy size={14} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span style={{ color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)', display: 'block', marginBottom: 'var(--space-xs)' }}>
+                                        USDT (TRC20)
+                                    </span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+                                        <span style={{ fontWeight: 500, fontSize: 'var(--font-size-sm)', wordBreak: 'break-all' }}>
+                                            TYASr5UV6HEcXatwdFQfmLVUqQQQMUxHLS
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => copyToClipboard('TYASr5UV6HEcXatwdFQfmLVUqQQQMUxHLS')}
+                                            style={{
+                                                background: 'none',
+                                                border: 'none',
+                                                color: 'var(--primary)',
+                                                cursor: 'pointer',
+                                                padding: 4,
+                                                flexShrink: 0
+                                            }}
+                                        >
+                                            {copied ? <Check size={14} /> : <Copy size={14} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style={{
+                                    marginTop: 'var(--space-md)',
+                                    padding: 'var(--space-sm)',
+                                    background: 'var(--warning-bg)',
+                                    borderRadius: 'var(--radius-sm)',
+                                    fontSize: 'var(--font-size-xs)',
+                                    color: 'var(--warning)'
+                                }}>
+                                    ⚠️ Send only the selected cryptocurrency to this address. Sending other assets may result in permanent loss.
+                                </div>
+                            </div>
+                        )}
+
                         <div style={{
                             display: 'flex',
                             alignItems: 'flex-start',
