@@ -54,6 +54,11 @@
     flex: 1;
     overflow-y: auto;
     padding: var(--space-md);
+    overscroll-behavior: contain;
+    /* Prevent body scroll when at end */
+    -webkit-overflow-scrolling: touch;
+    /* Smooth scroll on iOS */
+    padding: var(--space-md);
 }
 
 .nav-group {
@@ -342,6 +347,8 @@
 @media (max-width: 1024px) {
     .sidebar {
         transform: translateX(-100%);
+        height: 100dvh;
+        /* Use dynamic viewport height for mobile browsers */
     }
 
     .sidebar-open {
@@ -350,6 +357,21 @@
 
     .sidebar-close {
         display: block;
+        padding: var(--space-md);
+        /* Larger touch target */
+        margin-right: -10px;
+        /* Offset the extra padding */
+    }
+
+    .sidebar-header {
+        flex-shrink: 0;
+        /* Prevent header shrinking */
+    }
+
+    .sidebar-footer {
+        flex-shrink: 0;
+        /* Prevent footer shrinking */
+        padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 20px));
     }
 
     .sidebar-overlay {
@@ -363,6 +385,12 @@
     .menu-toggle {
         display: block;
         margin-right: auto;
+        padding: var(--space-md);
+        /* Larger touch target */
+        margin-left: -10px;
+        /* Offset padding */
+        z-index: 60;
+        /* Ensure above other navbar elements */
     }
 }
 
