@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     ArrowDownRight,
     ArrowUpRight,
@@ -10,10 +10,14 @@ import {
     Search,
     Download
 } from 'lucide-react'
-import { mockTransactions } from '../../data/mockData'
+import axios from 'axios'
 import '../dashboard/Dashboard.css'
 
+const API_URL = import.meta.env.VITE_API_URL || '/api'
+
 function Transactions() {
+    const [transactions, setTransactions] = useState([])
+    const [loading, setLoading] = useState(true)
     const [filter, setFilter] = useState('all')
     const [search, setSearch] = useState('')
 
@@ -34,9 +38,26 @@ function Transactions() {
         })
     }
 
-    const filteredTransactions = mockTransactions.filter(t => {
+    useEffect(() => {
+        fetchTransactions()
+    }, [])
+
+    const fetchTransactions = async () => {
+        try {
+            const token = localStorage.getItem('token')
+            const config = { headers: { Authorization: `Bearer ${token}` } }
+            const res = await axios.get(`${API_URL}/wallet/transactions`, config)
+            setTransactions(res.data.transactions || [])
+        } catch (error) {
+            console.error('Error fetching transactions:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const filteredTransactions = transactions.filter(t => {
         if (filter !== 'all' && t.type !== filter) return false
-        if (search && !t.reference.toLowerCase().includes(search.toLowerCase())) return false
+        if (search && !t.reference?.toLowerCase().includes(search.toLowerCase())) return false
         return true
     })
 
@@ -57,6 +78,17 @@ function Transactions() {
             case 'failed': return <XCircle size={12} />
             default: return null
         }
+    }
+
+    if (loading) {
+        return (
+            <div className="dashboard-page fade-in">
+                <div style={{ textAlign: 'center', padding: '4rem' }}>
+                    <div className="loader" style={{ margin: '0 auto' }} />
+                    <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Loading transactions...</p>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -144,7 +176,7 @@ function Transactions() {
                                     </td>
                                     <td>
                                         <span className={`badge badge-${transaction.status === 'completed' ? 'success' :
-                                                transaction.status === 'pending' ? 'warning' : 'danger'
+                                            transaction.status === 'pending' ? 'warning' : 'danger'
                                             }`}>
                                             {getStatusIcon(transaction.status)}
                                             {transaction.status}

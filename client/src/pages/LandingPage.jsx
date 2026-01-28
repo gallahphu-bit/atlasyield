@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
     TrendingUp,
@@ -8,11 +9,15 @@ import {
     Lock,
     ArrowRight,
     CheckCircle,
-    Star
+    Star,
+    Menu,
+    X
 } from 'lucide-react'
 import './LandingPage.css'
 
 function LandingPage() {
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
     const stats = [
         { value: '$15M+', label: 'Assets Under Management' },
         { value: '12,000+', label: 'Active Investors' },
@@ -78,6 +83,8 @@ function LandingPage() {
                         </svg>
                         <span>AtlasYield</span>
                     </Link>
+
+                    {/* Desktop Nav */}
                     <div className="landing-nav-links">
                         <a href="#features">Features</a>
                         <a href="#plans">Plans</a>
@@ -88,8 +95,52 @@ function LandingPage() {
                         <Link to="/login" className="btn btn-ghost">Sign In</Link>
                         <Link to="/register" className="btn btn-primary">Get Started</Link>
                     </div>
+
+                    {/* Mobile Toggle */}
+                    <button
+                        className="mobile-menu-toggle"
+                        onClick={() => setMobileMenuOpen(true)}
+                    >
+                        <Menu size={24} />
+                    </button>
                 </div>
             </nav>
+
+            {/* Mobile Menu Overlay */}
+            {mobileMenuOpen && (
+                <div className="mobile-menu-overlay">
+                    <div className="mobile-menu-header">
+                        <Link to="/" className="landing-logo" onClick={() => setMobileMenuOpen(false)}>
+                            <svg viewBox="0 0 100 100" width="36" height="36">
+                                <circle cx="50" cy="50" r="45" fill="url(#landingLogoGrad)" />
+                                <path d="M30 65 L50 25 L70 65 L50 55 Z" fill="white" opacity="0.95" />
+                            </svg>
+                            <span>AtlasYield</span>
+                        </Link>
+                        <button
+                            className="mobile-menu-toggle"
+                            style={{ display: 'block' }}
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            <X size={24} />
+                        </button>
+                    </div>
+                    <div className="mobile-menu-links">
+                        <a href="#features" onClick={() => setMobileMenuOpen(false)}>Features</a>
+                        <a href="#plans" onClick={() => setMobileMenuOpen(false)}>Plans</a>
+                        <Link to="/about" onClick={() => setMobileMenuOpen(false)}>About</Link>
+                        <Link to="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</Link>
+                    </div>
+                    <div className="mobile-menu-actions">
+                        <Link to="/login" className="btn btn-secondary btn-lg" onClick={() => setMobileMenuOpen(false)}>
+                            Sign In
+                        </Link>
+                        <Link to="/register" className="btn btn-primary btn-lg" onClick={() => setMobileMenuOpen(false)}>
+                            Get Started
+                        </Link>
+                    </div>
+                </div>
+            )}
 
             {/* Hero */}
             <section className="hero-section">

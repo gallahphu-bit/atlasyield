@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
     TrendingUp,
@@ -6,10 +7,31 @@ import {
     ExternalLink,
     Calendar
 } from 'lucide-react'
-import { mockInvestments } from '../../data/mockData'
+import axios from 'axios'
 import '../dashboard/Dashboard.css'
 
+const API_URL = import.meta.env.VITE_API_URL || '/api'
+
 function MyInvestments() {
+    const [investments, setInvestments] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchInvestments()
+    }, [])
+
+    const fetchInvestments = async () => {
+        try {
+            const token = localStorage.getItem('token')
+            const config = { headers: { Authorization: `Bearer ${token}` } }
+            const res = await axios.get(`${API_URL}/investments`, config)
+            setInvestments(res.data.investments || [])
+        } catch (error) {
+            console.error('Error fetching investments:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -25,8 +47,19 @@ function MyInvestments() {
         })
     }
 
-    const activeInvestments = mockInvestments.filter(inv => inv.status === 'active')
-    const completedInvestments = mockInvestments.filter(inv => inv.status === 'completed')
+    const activeInvestments = investments.filter(inv => inv.status === 'active')
+    const completedInvestments = investments.filter(inv => inv.status === 'completed')
+
+    if (loading) {
+        return (
+            <div className="dashboard-page fade-in">
+                <div style={{ textAlign: 'center', padding: '4rem' }}>
+                    <div className="loader" style={{ margin: '0 auto' }} />
+                    <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Loading investments...</p>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="dashboard-page fade-in">
