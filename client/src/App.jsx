@@ -48,6 +48,7 @@ import About from './pages/legal/About'
 // Protected Route Component
 import ProtectedRoute from './components/common/ProtectedRoute'
 import AdminRoute from './components/common/AdminRoute'
+import WhatsAppButton from './components/common/WhatsAppButton'
 
 function App() {
     return (
@@ -103,6 +104,7 @@ function App() {
                         {/* Catch all */}
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
+                    <WhatsAppButton />
                 </Router>
             </NotificationProvider>
         </AuthProvider>

@@ -164,11 +164,11 @@ function Deposit() {
                                     </span>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
                                         <span style={{ fontWeight: 500, fontSize: 'var(--font-size-sm)', wordBreak: 'break-all' }}>
-                                            bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                                            bc1qsfuex7kgmy8fd4y6ldnjw6wq7m09gqe6ffm7ws
                                         </span>
                                         <button
                                             type="button"
-                                            onClick={() => copyToClipboard('bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh')}
+                                            onClick={() => copyToClipboard('bc1qsfuex7kgmy8fd4y6ldnjw6wq7m09gqe6ffm7ws')}
                                             style={{
                                                 background: 'none',
                                                 border: 'none',
@@ -185,15 +185,15 @@ function Deposit() {
 
                                 <div style={{ marginBottom: 'var(--space-lg)' }}>
                                     <span style={{ color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)', display: 'block', marginBottom: 'var(--space-xs)' }}>
-                                        Ethereum (ETH)
+                                        BNB (Binance Smart Chain)
                                     </span>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
                                         <span style={{ fontWeight: 500, fontSize: 'var(--font-size-sm)', wordBreak: 'break-all' }}>
-                                            0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
+                                            0xff9924609d50551Fa6157A4562e861A1A44F5888
                                         </span>
                                         <button
                                             type="button"
-                                            onClick={() => copyToClipboard('0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb')}
+                                            onClick={() => copyToClipboard('0xff9924609d50551Fa6157A4562e861A1A44F5888')}
                                             style={{
                                                 background: 'none',
                                                 border: 'none',
@@ -210,15 +210,40 @@ function Deposit() {
 
                                 <div>
                                     <span style={{ color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)', display: 'block', marginBottom: 'var(--space-xs)' }}>
-                                        USDT (TRC20)
+                                        Ethereum (ETH)
                                     </span>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
                                         <span style={{ fontWeight: 500, fontSize: 'var(--font-size-sm)', wordBreak: 'break-all' }}>
-                                            TYASr5UV6HEcXatwdFQfmLVUqQQQMUxHLS
+                                            0xff9924609d50551Fa6157A4562e861A1A44F5888
                                         </span>
                                         <button
                                             type="button"
-                                            onClick={() => copyToClipboard('TYASr5UV6HEcXatwdFQfmLVUqQQQMUxHLS')}
+                                            onClick={() => copyToClipboard('0xff9924609d50551Fa6157A4562e861A1A44F5888')}
+                                            style={{
+                                                background: 'none',
+                                                border: 'none',
+                                                color: 'var(--primary)',
+                                                cursor: 'pointer',
+                                                padding: 4,
+                                                flexShrink: 0
+                                            }}
+                                        >
+                                            {copied ? <Check size={14} /> : <Copy size={14} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style={{ marginBottom: 'var(--space-lg)' }}>
+                                    <span style={{ color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)', display: 'block', marginBottom: 'var(--space-xs)' }}>
+                                        USDT (ERC20)
+                                    </span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+                                        <span style={{ fontWeight: 500, fontSize: 'var(--font-size-sm)', wordBreak: 'break-all' }}>
+                                            0x7Bd69e1733841a3E8A22cf071f8b2Ac83aE319D6
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => copyToClipboard('0x7Bd69e1733841a3E8A22cf071f8b2Ac83aE319D6')}
                                             style={{
                                                 background: 'none',
                                                 border: 'none',

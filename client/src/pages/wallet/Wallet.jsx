@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
     Wallet as WalletIcon,
@@ -7,18 +8,50 @@ import {
     Clock,
     History
 } from 'lucide-react'
-import { mockWallet, mockTransactions } from '../../data/mockData'
+import axios from 'axios'
 import '../dashboard/Dashboard.css'
 
+const API_URL = import.meta.env.VITE_API_URL || '/api'
+
 function Wallet() {
+    const [wallet, setWallet] = useState(null)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchWalletData()
+    }, [])
+
+    const fetchWalletData = async () => {
+        try {
+            const token = localStorage.getItem('token')
+            const config = { headers: { Authorization: `Bearer ${token}` } }
+            const res = await axios.get(`${API_URL}/wallet`, config)
+            setWallet(res.data.wallet || { balance: 0, totalDeposited: 0, totalWithdrawn: 0, pendingWithdrawals: 0 })
+        } catch (error) {
+            console.error('Error fetching wallet:', error)
+            setWallet({ balance: 0, totalDeposited: 0, totalWithdrawn: 0, pendingWithdrawals: 0 })
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD'
-        }).format(amount)
+        }).format(amount || 0)
     }
 
-    const recentTransactions = mockTransactions.slice(0, 4)
+    if (loading) {
+        return (
+            <div className="dashboard-page fade-in">
+                <div style={{ textAlign: 'center', padding: '4rem' }}>
+                    <div className="loader" style={{ margin: '0 auto' }} />
+                    <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Loading wallet...</p>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="dashboard-page fade-in">
@@ -37,7 +70,7 @@ function Wallet() {
                             <WalletIcon size={24} style={{ color: 'var(--primary)' }} />
                         </div>
                     </div>
-                    <span className="stat-card-value">{formatCurrency(mockWallet.balance)}</span>
+                    <span className="stat-card-value">{formatCurrency(wallet?.balance)}</span>
                     <span className="stat-card-label">Available Balance</span>
                     <div style={{ display: 'flex', gap: 'var(--space-md)', marginTop: 'var(--space-lg)' }}>
                         <Link to="/wallet/deposit" className="btn btn-primary">
@@ -57,7 +90,7 @@ function Wallet() {
                             <ArrowDownToLine size={24} style={{ color: 'var(--success)' }} />
                         </div>
                     </div>
-                    <span className="stat-card-value">{formatCurrency(mockWallet.totalDeposited)}</span>
+                    <span className="stat-card-value">{formatCurrency(wallet?.totalDeposited)}</span>
                     <span className="stat-card-label">Total Deposited</span>
                 </div>
 
@@ -67,7 +100,7 @@ function Wallet() {
                             <ArrowUpFromLine size={24} style={{ color: 'var(--info)' }} />
                         </div>
                     </div>
-                    <span className="stat-card-value">{formatCurrency(mockWallet.totalWithdrawn)}</span>
+                    <span className="stat-card-value">{formatCurrency(wallet?.totalWithdrawn)}</span>
                     <span className="stat-card-label">Total Withdrawn</span>
                 </div>
             </div>
@@ -118,12 +151,12 @@ function Wallet() {
             </div>
 
             {/* Pending */}
-            {mockWallet.pendingWithdrawals > 0 && (
+            {wallet?.pendingWithdrawals > 0 && (
                 <div className="card" style={{ padding: 'var(--space-lg)', background: 'var(--warning-bg)', border: '1px solid var(--warning)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
                         <Clock size={20} style={{ color: 'var(--warning)' }} />
                         <span style={{ color: 'var(--warning)', fontWeight: 500 }}>
-                            You have {formatCurrency(mockWallet.pendingWithdrawals)} pending withdrawal(s)
+                            You have {formatCurrency(wallet?.pendingWithdrawals)} pending withdrawal(s)
                         </span>
                     </div>
                 </div>
