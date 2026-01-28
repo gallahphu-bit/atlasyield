@@ -639,7 +639,36 @@ a:hover {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
+  .stat-card {
+    padding: var(--space-md);
+  }
+
+  .stat-card-header {
+    margin-bottom: var(--space-sm);
+  }
+
+  .stat-card-value {
+    font-size: 1.75rem !important;
+    /* Force smaller size */
+  }
+
+  .chart-card,
+  .investments-card,
+  .transactions-section {
+    padding: var(--space-md);
+  }
+
+  .card-header h3 {
+    font-size: var(--font-size-base);
+    /* Smaller headers */
+  }
+
+  .dashboard-page {
+    gap: var(--space-sm);
+    /* Tighter vertical gap */
+  }
+
   .btn {
     width: 100%;
     justify-content: center;
@@ -648,6 +677,10 @@ a:hover {
   .card {
     padding: var(--space-md);
   }
+}
+
+@media (max-width: 480px) {
+  /* Additional tiny screen tweaks if needed */
 }
 
 /* Animation Classes */
@@ -677,7 +710,6 @@ a:hover {
 
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 

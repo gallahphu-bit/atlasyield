@@ -107,7 +107,7 @@ function Dashboard() {
                     <h1 className="welcome-title">Welcome back, {user?.firstName || 'User'}! 👋</h1>
                     <p className="welcome-subtitle">Here's what's happening with your investments today.</p>
                 </div>
-                <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+                <div className="welcome-actions">
                     <Link to="/wallet/withdraw" className="btn btn-secondary">
                         <ArrowUpRight size={18} />
                         Withdraw

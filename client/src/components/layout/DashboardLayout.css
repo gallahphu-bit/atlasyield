@@ -15,7 +15,8 @@
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    z-index: 100;
+    z-index: 2000;
+    /* Ensure on top of everything */
     transition: transform var(--transition-base);
 }
 
@@ -358,16 +359,19 @@
 
     .menu-toggle {
         display: block;
+        margin-right: auto;
     }
 }
 
 @media (max-width: 640px) {
     .dashboard-navbar {
         padding: 0 var(--space-md);
+        background: var(--bg-primary);
+        /* Solid background to prevent bleed */
     }
 
     .dashboard-content {
-        padding: var(--space-md);
+        padding: var(--space-sm);
     }
 
     .user-info {
@@ -375,6 +379,18 @@
     }
 
     .page-title {
-        font-size: var(--font-size-lg);
+        display: none;
+        /* Hide page title on mobile to prevent clutter */
+    }
+
+    /* Ensure Logo is visible in navbar if needed, or keep it clean */
+    .menu-toggle {
+        margin-right: auto;
+        /* Push menu to left */
+    }
+
+    .navbar-right {
+        margin-left: auto;
+        /* Push user menu to right */
     }
 }
