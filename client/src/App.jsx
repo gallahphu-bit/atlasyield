@@ -35,6 +35,7 @@ import KYC from './pages/profile/KYC'
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminUsers from './pages/admin/AdminUsers'
+import AdminUserManagement from './pages/admin/AdminUserManagement'
 import AdminPlans from './pages/admin/AdminPlans'
 import AdminTransactions from './pages/admin/AdminTransactions'
 
@@ -97,6 +98,7 @@ function App() {
                         <Route element={<AdminRoute><DashboardLayout isAdmin /></AdminRoute>}>
                             <Route path="/admin" element={<AdminDashboard />} />
                             <Route path="/admin/users" element={<AdminUsers />} />
+                            <Route path="/admin/user-management" element={<AdminUserManagement />} />
                             <Route path="/admin/plans" element={<AdminPlans />} />
                             <Route path="/admin/transactions" element={<AdminTransactions />} />
                         </Route>
