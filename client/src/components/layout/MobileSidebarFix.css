@@ -1,0 +1,122 @@
+/* 
+ * CRITICAL MOBILE SIDEBAR FIX
+ * This file contains the definitive mobile sidebar solution
+ * Import this AFTER DashboardLayout.css to ensure proper override
+ */
+
+@media (max-width: 1024px) {
+
+    /* Force sidebar to be completely hidden when closed */
+    .sidebar {
+        display: none !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100dvh;
+        background: var(--bg-secondary);
+        border-right: 1px solid var(--border-color);
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        /* Maximum z-index to ensure it's on top */
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    /* Show sidebar when open class is applied */
+    .sidebar.sidebar-open {
+        display: flex !important;
+        animation: slideInFromLeft 0.3s ease-out;
+    }
+
+    @keyframes slideInFromLeft {
+        from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Ensure close button is visible and functional */
+    .sidebar-close {
+        display: flex !important;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-md);
+        color: var(--text-primary);
+        width: 100%;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .sidebar-close:hover {
+        background: var(--bg-elevated);
+    }
+
+    /* Ensure overlay works properly */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9998;
+        /* Just below sidebar */
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    /* Ensure main content doesn't have left margin on mobile */
+    .dashboard-main {
+        margin-left: 0 !important;
+        width: 100%;
+    }
+
+    /* Ensure menu toggle is visible and clickable */
+    .menu-toggle {
+        display: block !important;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        cursor: pointer;
+        padding: var(--space-md);
+        margin-left: -10px;
+        z-index: 100;
+    }
+
+    .menu-toggle:active {
+        transform: scale(0.95);
+    }
+}
+
+@media (max-width: 640px) {
+
+    /* Extra small screens - ensure no interference */
+    .dashboard-navbar {
+        padding: 0 var(--space-md);
+        background: var(--bg-primary) !important;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .page-title {
+        display: none !important;
+    }
+
+    .user-info {
+        display: none !important;
+    }
+
+    .dashboard-content {
+        padding: var(--space-sm);
+    }
+}

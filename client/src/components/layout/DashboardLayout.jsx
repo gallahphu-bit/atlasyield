@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import './DashboardLayout.css'
+import './MobileSidebarFix.css'
 
 function DashboardLayout({ isAdmin = false }) {
     const { user, logout } = useAuth()
@@ -87,35 +88,20 @@ function DashboardLayout({ isAdmin = false }) {
     return (
         <div className="dashboard-layout">
             {/* Mobile Overlay */}
-            {sidebarOpen && (
-                <div
-                    className="sidebar-overlay"
-                    onClick={() => setSidebarOpen(false)}
-                />
-            )}
+            <div
+                className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`}
+                onClick={() => setSidebarOpen(false)}
+            />
 
             {/* Sidebar */}
             <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
                 <div className="sidebar-header">
-                    <div className="sidebar-logo">
-                        <svg viewBox="0 0 100 100" width="36" height="36">
-                            <defs>
-                                <linearGradient id="sidebarLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style={{ stopColor: '#22c997' }} />
-                                    <stop offset="100%" style={{ stopColor: '#0ea5e9' }} />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="50" cy="50" r="45" fill="url(#sidebarLogoGrad)" />
-                            <path d="M30 65 L50 25 L70 65 L50 55 Z" fill="white" opacity="0.95" />
-                            <circle cx="50" cy="50" r="8" fill="white" opacity="0.9" />
-                        </svg>
-                        <span className="sidebar-logo-text">AtlasYield</span>
-                    </div>
                     <button
                         className="sidebar-close"
                         onClick={() => setSidebarOpen(false)}
                     >
-                        <X size={20} />
+                        <X size={24} />
+                        <span style={{ marginLeft: '10px', fontSize: '1rem', fontWeight: '500' }}>Close Menu</span>
                     </button>
                 </div>
 

@@ -24,21 +24,6 @@
 .sidebar-header {
     padding: var(--space-lg);
     border-bottom: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.sidebar-logo {
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
-}
-
-.sidebar-logo-text {
-    font-size: var(--font-size-xl);
-    font-weight: 700;
-    color: var(--text-primary);
 }
 
 .sidebar-close {
@@ -346,21 +331,43 @@
 
 @media (max-width: 1024px) {
     .sidebar {
-        transform: translateX(-100%);
+        display: none;
+        /* Completely remove from layout when closed */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
         height: 100dvh;
-        /* Use dynamic viewport height for mobile browsers */
+        background: var(--bg-secondary);
+        border-right: 1px solid var(--border-color);
+        box-shadow: var(--shadow-xl);
+        z-index: 2000;
+        flex-direction: column;
     }
 
     .sidebar-open {
-        transform: translateX(0);
+        display: flex;
+        /* Show when open */
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(-100%);
+        }
+
+        to {
+            transform: translateX(0);
+        }
     }
 
     .sidebar-close {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
         padding: var(--space-md);
-        /* Larger touch target */
-        margin-right: -10px;
-        /* Offset the extra padding */
+        color: var(--text-primary);
+        width: 100%;
     }
 
     .sidebar-header {

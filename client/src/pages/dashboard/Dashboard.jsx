@@ -7,7 +7,7 @@ import {
     BarChart3,
     ArrowUpRight,
     ArrowDownRight,
-    Clock,
+    History,
     CheckCircle2,
     ExternalLink
 } from 'lucide-react'
@@ -108,7 +108,11 @@ function Dashboard() {
                     <p className="welcome-subtitle">Here's what's happening with your investments today.</p>
                 </div>
                 <div className="welcome-actions">
-                    <Link to="/wallet/withdraw" className="btn btn-secondary">
+                    <Link
+                        to="/wallet/withdraw"
+                        className={`btn btn-secondary ${(wallet?.balance || 0) <= 0 ? 'btn-disabled' : ''}`}
+                        onClick={(e) => (wallet?.balance || 0) <= 0 && e.preventDefault()}
+                    >
                         <ArrowUpRight size={18} />
                         Withdraw
                     </Link>
@@ -121,7 +125,7 @@ function Dashboard() {
 
             {/* Stats Grid */}
             <div className="stats-grid">
-                <div className="stat-card stat-card-primary">
+                <div className={`stat-card stat-card-primary ${totalValue === 0 ? 'zero-value' : ''}`}>
                     <div className="stat-card-header">
                         <div className="stat-card-icon" style={{ background: 'var(--primary-glow)' }}>
                             <Wallet size={24} style={{ color: 'var(--primary)' }} />
@@ -137,7 +141,7 @@ function Dashboard() {
                     <span className="stat-card-label">Total Portfolio Value</span>
                 </div>
 
-                <div className="stat-card">
+                <div className={`stat-card ${totalProfit === 0 ? 'zero-value' : ''}`}>
                     <div className="stat-card-header">
                         <div className="stat-card-icon" style={{ background: 'var(--success-bg)' }}>
                             <TrendingUp size={24} style={{ color: 'var(--success)' }} />
@@ -153,7 +157,7 @@ function Dashboard() {
                     <span className="stat-card-label">Total Profit</span>
                 </div>
 
-                <div className="stat-card">
+                <div className={`stat-card ${(wallet?.balance || 0) === 0 ? 'zero-value' : ''}`}>
                     <div className="stat-card-header">
                         <div className="stat-card-icon" style={{ background: 'var(--info-bg)' }}>
                             <PiggyBank size={24} style={{ color: 'var(--info)' }} />
@@ -163,7 +167,7 @@ function Dashboard() {
                     <span className="stat-card-label">Wallet Balance</span>
                 </div>
 
-                <div className="stat-card">
+                <div className={`stat-card ${activeInvestments.length === 0 ? 'zero-value' : ''}`}>
                     <div className="stat-card-header">
                         <div className="stat-card-icon" style={{ background: 'var(--warning-bg)' }}>
                             <BarChart3 size={24} style={{ color: 'var(--warning)' }} />
@@ -231,19 +235,15 @@ function Dashboard() {
                                 </AreaChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div style={{
-                                height: 300,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexDirection: 'column',
-                                gap: 'var(--space-md)'
-                            }}>
-                                <BarChart3 size={48} style={{ color: 'var(--text-muted)', opacity: 0.5 }} />
-                                <p style={{ color: 'var(--text-muted)', textAlign: 'center' }}>
-                                    No investment data yet.<br />
-                                    <Link to="/investments/plans" style={{ color: 'var(--primary)' }}>Start investing</Link> to see your portfolio grow!
-                                </p>
+                            <div className="empty-chart-state">
+                                <div className="empty-state-icon-wrapper">
+                                    <BarChart3 size={48} className="pulse-icon" />
+                                </div>
+                                <div className="empty-state-content">
+                                    <h4>No Active Performance</h4>
+                                    <p>Your investment progress will be graphed here once you start a plan.</p>
+                                    <Link to="/investments/plans" className="btn btn-sm btn-outline">Explore Plans</Link>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -258,29 +258,36 @@ function Dashboard() {
                         </Link>
                     </div>
                     <div className="investments-list">
-                        {activeInvestments.map(investment => (
-                            <div key={investment.id} className="investment-item">
-                                <div className="investment-info">
-                                    <span className="investment-name">{investment.planName}</span>
-                                    <span className="investment-amount">{formatCurrency(investment.amount)}</span>
-                                </div>
-                                <div className="investment-progress-container">
-                                    <div className="progress-bar">
-                                        <div
-                                            className="progress-fill"
-                                            style={{ width: `${investment.progress}%` }}
-                                        />
+                        {activeInvestments.length > 0 ? (
+                            activeInvestments.map(investment => (
+                                <div key={investment.id} className="investment-item">
+                                    <div className="investment-info">
+                                        <span className="investment-name">{investment.planName}</span>
+                                        <span className="investment-amount">{formatCurrency(investment.amount)}</span>
                                     </div>
-                                    <span className="progress-text">{investment.progress}% complete</span>
+                                    <div className="investment-progress-container">
+                                        <div className="progress-bar">
+                                            <div
+                                                className="progress-fill"
+                                                style={{ width: `${investment.progress}%` }}
+                                            />
+                                        </div>
+                                        <span className="progress-text">{investment.progress}% complete</span>
+                                    </div>
+                                    <div className="investment-stats">
+                                        <span className="investment-profit positive">
+                                            +{formatCurrency(investment.profit)}
+                                        </span>
+                                        <span className="investment-rate">+{investment.returnRate}% ROI</span>
+                                    </div>
                                 </div>
-                                <div className="investment-stats">
-                                    <span className="investment-profit positive">
-                                        +{formatCurrency(investment.profit)}
-                                    </span>
-                                    <span className="investment-rate">+{investment.returnRate}% ROI</span>
-                                </div>
+                            ))
+                        ) : (
+                            <div className="empty-investments-minimal">
+                                <TrendingUp size={24} className="text-muted" />
+                                <p>No active plans</p>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </div>
@@ -293,53 +300,94 @@ function Dashboard() {
                         View All <ExternalLink size={14} />
                     </Link>
                 </div>
-                <div className="table-container">
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Reference</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+
+                {recentTransactions.length > 0 ? (
+                    <>
+                        {/* Desktop Table */}
+                        <div className="table-container desktop-only">
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Reference</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {recentTransactions.map(transaction => (
+                                        <tr key={transaction.id}>
+                                            <td>
+                                                <div className="transaction-type">
+                                                    <span className={`transaction-icon ${transaction.type}`}>
+                                                        {transaction.type === 'deposit' && <ArrowDownRight size={16} />}
+                                                        {transaction.type === 'withdrawal' && <ArrowUpRight size={16} />}
+                                                        {transaction.type === 'investment' && <TrendingUp size={16} />}
+                                                        {transaction.type === 'profit' && <TrendingUp size={16} />}
+                                                    </span>
+                                                    <span className="transaction-label">
+                                                        {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span className={transaction.type === 'withdrawal' ? 'negative' : 'positive'}>
+                                                    {transaction.type === 'withdrawal' ? '-' : '+'}
+                                                    {formatCurrency(transaction.amount)}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span className={`badge badge-${transaction.status === 'completed' ? 'success' : transaction.status === 'pending' ? 'warning' : 'danger'}`}>
+                                                    {transaction.status === 'completed' && <CheckCircle2 size={12} />}
+                                                    {transaction.status === 'pending' && <Clock size={12} />}
+                                                    {transaction.status}
+                                                </span>
+                                            </td>
+                                            <td>{formatDate(transaction.date)}</td>
+                                            <td className="text-muted">{transaction.reference}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="mobile-only transaction-cards">
                             {recentTransactions.map(transaction => (
-                                <tr key={transaction.id}>
-                                    <td>
-                                        <div className="transaction-type">
-                                            <span className={`transaction-icon ${transaction.type}`}>
-                                                {transaction.type === 'deposit' && <ArrowDownRight size={16} />}
-                                                {transaction.type === 'withdrawal' && <ArrowUpRight size={16} />}
-                                                {transaction.type === 'investment' && <TrendingUp size={16} />}
-                                                {transaction.type === 'profit' && <TrendingUp size={16} />}
-                                            </span>
-                                            <span className="transaction-label">
-                                                {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
-                                            </span>
+                                <div key={transaction.id} className="transaction-mobile-card">
+                                    <div className="tmc-header">
+                                        <div className="tmc-type">
+                                            <div className={`transaction-icon sm ${transaction.type}`}>
+                                                {transaction.type === 'deposit' && <ArrowDownRight size={14} />}
+                                                {transaction.type === 'withdrawal' && <ArrowUpRight size={14} />}
+                                                {(transaction.type === 'investment' || transaction.type === 'profit') && <TrendingUp size={14} />}
+                                            </div>
+                                            <span>{transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}</span>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <span className={transaction.type === 'withdrawal' ? 'negative' : 'positive'}>
-                                            {transaction.type === 'withdrawal' ? '-' : '+'}
-                                            {formatCurrency(transaction.amount)}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span className={`badge badge-${transaction.status === 'completed' ? 'success' : transaction.status === 'pending' ? 'warning' : 'danger'}`}>
-                                            {transaction.status === 'completed' && <CheckCircle2 size={12} />}
-                                            {transaction.status === 'pending' && <Clock size={12} />}
+                                        <span className={`badge badge-sm badge-${transaction.status === 'completed' ? 'success' : transaction.status === 'pending' ? 'warning' : 'danger'}`}>
                                             {transaction.status}
                                         </span>
-                                    </td>
-                                    <td>{formatDate(transaction.date)}</td>
-                                    <td className="text-muted">{transaction.reference}</td>
-                                </tr>
+                                    </div>
+                                    <div className="tmc-body">
+                                        <div className="tmc-amount">
+                                            <span className={transaction.type === 'withdrawal' ? 'negative' : 'positive'}>
+                                                {transaction.type === 'withdrawal' ? '-' : '+'}
+                                                {formatCurrency(transaction.amount)}
+                                            </span>
+                                            <span className="tmc-date">{formatDate(transaction.date)}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             ))}
-                        </tbody>
-                    </table>
-                </div>
+                        </div>
+                    </>
+                ) : (
+                    <div className="empty-transactions-state">
+                        <History size={40} className="text-muted" />
+                        <p>No transactions yet</p>
+                    </div>
+                )}
             </div>
         </div>
     )
