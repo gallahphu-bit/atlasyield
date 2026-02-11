@@ -318,7 +318,7 @@ router.put('/users/:id/wallet', async (req, res) => {
 });
 
 // Create investment for user
-router.post('/admin/investments/create', async (req, res) => {
+router.post('/investments/create', async (req, res) => {
     try {
         const { userId, planId, amount, customProfit, customDuration } = req.body;
 
@@ -385,7 +385,7 @@ router.post('/admin/investments/create', async (req, res) => {
 });
 
 // Update investment
-router.put('/admin/investments/:id', async (req, res) => {
+router.put('/investments/:id', async (req, res) => {
     try {
         const { amount, profit, status, progress, maturityDate } = req.body;
 
@@ -414,7 +414,7 @@ router.put('/admin/investments/:id', async (req, res) => {
 });
 
 // Delete investment
-router.delete('/admin/investments/:id', async (req, res) => {
+router.delete('/investments/:id', async (req, res) => {
     try {
         const investment = await Investment.findByIdAndDelete(req.params.id);
 
@@ -430,7 +430,7 @@ router.delete('/admin/investments/:id', async (req, res) => {
 });
 
 // Create manual transaction
-router.post('/admin/transactions/create', async (req, res) => {
+router.post('/transactions/create', async (req, res) => {
     try {
         const { userId, type, amount, description, updateWallet } = req.body;
 

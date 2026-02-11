@@ -125,6 +125,35 @@ router.post('/login', [
     }
 });
 
+
+// Get current user (auth check)
+const auth = require('../middleware/auth');
+router.get('/me', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).select('-password -twoFactorSecret');
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        res.json({
+            success: true,
+            user: {
+                id: user._id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role,
+                status: user.status,
+                isVerified: user.isVerified,
+                kycStatus: user.kycStatus,
+                twoFactorEnabled: user.twoFactorEnabled
+            }
+        });
+    } catch (error) {
+        console.error('Get me error:', error);
+        res.status(500).json({ success: false, message: 'Failed to get user' });
+    }
+});
+
 // Verify email
 router.post('/verify-email', async (req, res) => {
     try {
