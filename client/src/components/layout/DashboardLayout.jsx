@@ -77,6 +77,7 @@ function DashboardLayout({ isAdmin = false }) {
             items: [
                 { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
                 { icon: Users, label: 'Users', path: '/admin/users' },
+                { icon: Settings, label: 'User Management', path: '/admin/user-management' },
                 { icon: TrendingUp, label: 'Investment Plans', path: '/admin/plans' },
                 { icon: CreditCard, label: 'Transactions', path: '/admin/transactions' },
             ]

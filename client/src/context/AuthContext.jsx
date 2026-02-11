@@ -121,6 +121,7 @@ export function AuthProvider({ children }) {
 
     const value = {
         user,
+        token: localStorage.getItem('token'),
         loading,
         isAuthenticated,
         error,
